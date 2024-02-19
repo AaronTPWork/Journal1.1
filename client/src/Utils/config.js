@@ -1,0 +1,1 @@
+export const baseUrl = 'https://gamma.dgnetrix.com/api-universal';

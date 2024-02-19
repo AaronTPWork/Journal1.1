@@ -1,24 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import { Folders } from "./sections/Folders";
 import { SavedNotes } from "./sections/SavedNotes";
+import NewNotes from "./sections/NewNotes";
+
+import { baseUrl } from "../../Utils/config";
 
 import styles from "./styles.module.css";
-// import { NewNotes } from "./sections/NewNotes";
-import NoteWithAnnotations from "./sections/NewNotes";
 
 export const Home = () => {
-  const notes = [];
-  // Calls random fact api to get a random fact and pushes to list
-  const callAPI = async () => {
-    for (let i = 0; i <= 10; i++) {
-      await fetch("https://uselessfacts.jsph.pl/api/v2/facts/random")
-        .then((res) => res.json())
-        .then((data) => {
-          notes.push(data);
-        });
+  const [savedNotes, setSavedNotes] = useState([]);
+  const [selectedNote, setSelectedNote] = useState([]);
+
+  useEffect(() => {
+    const getNotes = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/journal/daily_journal_date`);
+        setSavedNotes(Object.values(response.data));
+      } catch (error) {
+        console.log(error);
+      }
     }
-  };
-  callAPI();
+
+    getNotes();
+  }, []);
+
+  const handleSelectNote = async (date) => {
+    console.log(date);
+    const response = await axios.get(`${baseUrl}/journal/daily_journal_date?date_created=${date}`);
+    setSelectedNote(Object.values(response.data));
+  }
 
   return (
     <>
@@ -28,9 +40,9 @@ export const Home = () => {
           {/* Folders Section */}
           <Folders />
           {/* Saved Notes Section */}
-          <SavedNotes randomData={notes} />
+          <SavedNotes notes={savedNotes} handleSelectNote={handleSelectNote} />
           {/* New Notes Section */}
-          <NoteWithAnnotations />
+          <NewNotes journals={selectedNote} handleSelectNote={handleSelectNote}/>
           <div className={styles.newNotes}></div>
         </div>
       </div>

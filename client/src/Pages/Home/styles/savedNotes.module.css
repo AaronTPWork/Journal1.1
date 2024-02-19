@@ -23,7 +23,7 @@
 }
 
 .home_savedNoteDetails h3 {
-  @apply text-lg font-bold;
+  @apply text-lg font-bold cursor-pointer;
 }
 
 .home_savedNoteDetails p {
